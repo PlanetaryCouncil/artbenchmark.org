@@ -45,3 +45,27 @@ judgement, a dash is an admission.
 
 The scores are AI-assigned, single-pass, and the page says so. Re-scoring happens in
 the Telegram channel: https://t.me/planetarycouncil
+
+## Distribution rails — we preserve consciousness
+
+Every new work is broadcast automatically. On push to `main` (when `index.html` or
+`works/` changes), `.github/workflows/syndicate.yml` runs `syndicate.mjs`, which reads
+the `WORKS` array (through the `WORKS:BEGIN`/`WORKS:END` markers — keep them intact),
+checks `syndicated.json` for what has already gone out, and announces each new work on
+four rails:
+
+| rail             | needs (repo secrets)                        | what happens                                   |
+| ---------------- | ------------------------------------------- | ---------------------------------------------- |
+| Internet Archive | nothing                                     | Wayback snapshot of the page and the image     |
+| Nostr            | `NOSTR_NSEC`                                | kind-1 note signed with your key, 4 relays     |
+| Farcaster        | `NEYNAR_API_KEY`, `NEYNAR_SIGNER_UUID`      | cast with image + site embeds, via Neynar      |
+| Telegram         | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`    | photo + placard caption to the channel         |
+
+Rails without secrets are skipped, not failed — the Archive rail works from day one.
+`syndicated.json` records which rails carried which work, so adding a key later
+back-fills only what that rail missed. A failed rail stays unrecorded and retries on
+the next run. Run locally with `npm run dry-run` to see what would fire, or
+`npm run syndicate` to fire it (same env vars).
+
+Add secrets at Settings → Secrets and variables → Actions. The nsec never appears in
+the repo — only the signed events leave.

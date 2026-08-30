@@ -1,0 +1,14 @@
+{
+  "name": "artbenchmark-syndicator",
+  "private": true,
+  "type": "module",
+  "description": "Broadcasts new works on artbenchmark.org to Nostr, Farcaster, Telegram and the Internet Archive.",
+  "scripts": {
+    "syndicate": "node syndicate.mjs",
+    "dry-run": "node syndicate.mjs --dry-run"
+  },
+  "dependencies": {
+    "nostr-tools": "^2.10.0",
+    "ws": "^8.18.0"
+  }
+}
