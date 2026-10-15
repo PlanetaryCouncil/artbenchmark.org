@@ -8,6 +8,7 @@
     "dry-run": "node syndicate.mjs --dry-run"
   },
   "dependencies": {
+    "image-size": "^2.0.4",
     "nostr-tools": "^2.10.0",
     "ws": "^8.18.0"
   }

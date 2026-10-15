@@ -6,6 +6,9 @@ on:
     paths:
       - index.html
       - "works/**"
+  # The drip: three drops a day (UTC), MAX_PER_RUN works each.
+  schedule:
+    - cron: "17 8,14,20 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -28,24 +31,34 @@ jobs:
           node-version: 22
 
       - name: Wait for GitHub Pages to serve the new work
+        if: github.event_name == 'push'
         run: sleep 90
 
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
 
       - name: Broadcast
         env:
+          MAX_PER_RUN: ${{ vars.MAX_PER_RUN || '1' }}
           NOSTR_NSEC: ${{ secrets.NOSTR_NSEC }}
           NEYNAR_API_KEY: ${{ secrets.NEYNAR_API_KEY }}
           NEYNAR_SIGNER_UUID: ${{ secrets.NEYNAR_SIGNER_UUID }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
         run: node syndicate.mjs
 
+      # Runs even when a rail failed, so the rails that did succeed are recorded
+      # and never post twice.
       - name: Commit the ledger
+        if: always()
         run: |
-          if git diff --quiet -- syndicated.json; then exit 0; fi
+          # status, not diff: the first ledger is an untracked file
+          if [ -z "$(git status --porcelain -- syndicated.json)" ]; then exit 0; fi
           git config user.name "artbenchmark-syndicator"
           git config user.email "actions@users.noreply.github.com"
           git add syndicated.json
           git commit -m "Record syndication [syndicated]"
+          git pull --rebase origin main
           git push
