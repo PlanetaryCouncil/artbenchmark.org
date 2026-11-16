@@ -5,7 +5,11 @@
   "description": "Broadcasts new works on artbenchmark.org to Nostr, Farcaster, Telegram and the Internet Archive.",
   "scripts": {
     "syndicate": "node syndicate.mjs",
-    "dry-run": "node syndicate.mjs --dry-run"
+    "dry-run": "node syndicate.mjs --dry-run",
+    "build:site": "node scripts/build-static.mjs",
+    "deploy": "bash scripts/publish-cloudflare.sh",
+    "deploy:check": "bash scripts/publish-cloudflare.sh --dry-run",
+    "verify:live": "node scripts/verify-live.mjs"
   },
   "dependencies": {
     "image-size": "^2.0.4",

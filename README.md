@@ -8,8 +8,9 @@ transcript, and links to Planetary Council, Telegram, Twitter / X and Instagram.
 
 ## Website
 
-Static HTML and CSS, with no build step or runtime dependencies. GitHub Pages serves
-`index.html` from this repository; `CNAME` retains the existing custom domain.
+Static HTML and CSS with no runtime dependencies. The production domains are attached
+to the Cloudflare Worker **artbenchmark**. GitHub Pages is also enabled, but publishing
+to GitHub Pages does not update that Worker. `CNAME` retains the GitHub Pages domain setting.
 
 - `index.html` — page copy, links, accessible poster transcript, and social metadata.
 - `styles.css` — responsive cream, yellow and violet layout.
@@ -23,6 +24,43 @@ Open `index.html` through a local static server to preview root-relative asset l
 When changing the public domain, update `CNAME`, the canonical URL, social image URLs,
 `robots.txt` and `sitemap.xml` together. To update the share card, edit the SVG and
 export it as a 1200 × 630 PNG. Social platforms may cache old previews.
+
+## Publish to the existing Cloudflare Worker
+
+Requires Node.js **22.12 or newer**, npm, and access to the Cloudflare account that owns
+`artbenchmark.org`. From a fresh checkout of this repository, run:
+
+```sh
+bash scripts/publish-cloudflare.sh
+```
+
+The script builds `dist/` from the public page and assets, then uses pinned Wrangler
+4.162.0 to update the existing Worker `artbenchmark`. Wrangler uses your local login,
+or opens a browser login if needed. Select the account that owns the domain if asked.
+The configuration declares the two existing custom domains: `artbenchmark.org` and
+`www.artbenchmark.org`. Cloudflare manages their locked Worker DNS records; no TXT
+record or DNS import is needed. This deploy replaces the old website on that Worker.
+
+The script then checks that both domains serve this checkout's HTML, stylesheet,
+share image and favicon. If propagation takes longer, run `node scripts/verify-live.mjs`
+again. The deploy may have succeeded even if the later verification times out.
+
+Useful commands:
+
+```sh
+npm run build:site   # prepare the public files only
+npm run deploy:check # Wrangler dry run; no publication or login required
+npm run deploy      # publish, then verify the live domains
+npm run verify:live  # check the live domains again
+```
+
+No `npm install` is needed for these commands. Wrangler is downloaded by `npx` when
+needed. If several Cloudflare accounts are available, you can select one by setting
+`CLOUDFLARE_ACCOUNT_ID` in your terminal. Keep credentials in your local Wrangler
+login or environment; never commit them.
+
+For Cloudflare Workers Builds, use `npm run build:site` as the build command and
+`npx wrangler@4.162.0 deploy` as the deploy command with `main` as the production branch.
 
 ## Future collection and existing syndication
 
