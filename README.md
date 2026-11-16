@@ -1,50 +1,38 @@
 # Art Benchmark
 
-The Marsita the Ultra & Planetary Council collection of visual works, each scored on three
-axes. Single self-contained page: `index.html` (data lives in the `WORKS` array in the
-inline script). Images live in `works/`.
+A bright, mobile-friendly placeholder for [artbenchmark.org](https://artbenchmark.org/).
 
-Live at https://artbenchmark.org (GitHub Pages, `CNAME` in this repo).
+“Who decides what is art?” introduces the provisional art benchmark from Marsita the
+Ultra and Planetary Council. The page includes the poster, an expandable text
+transcript, and links to Planetary Council, Telegram, Twitter / X and Instagram.
 
-Sibling projects: the music is at
-[marsita-the-ultra](https://github.com/PlanetaryCouncil/marsita-the-ultra);
-this benchmark is for visual images.
+## Website
 
-Discussion and re-scoring: https://t.me/planetarycouncil
+Static HTML and CSS, with no build step or runtime dependencies. GitHub Pages serves
+`index.html` from this repository; `CNAME` retains the existing custom domain.
 
-## Adding a work
+- `index.html` — page copy, links, accessible poster transcript, and social metadata.
+- `styles.css` — responsive cream, yellow and violet layout.
+- `assets/art-benchmark.jpg` — full-size provisional poster, based on the supplied image.
+- `assets/art-benchmark*.webp` — smaller, responsive versions for the page.
+- `assets/share-preview.svg` / `.png` — editable source and 1200 × 630 social preview.
+- `assets/favicon.svg`, `favicon.ico`, and `assets/apple-touch-icon.png` — site icons.
+- `robots.txt` / `sitemap.xml` — crawler discovery.
 
-1. Drop the image into `works/` — e.g. `works/001.jpg`. Web-sized (≤ ~2000 px on the
-   long edge, ≤ ~1 MB) keeps the wall fast.
-2. Add an entry to the `WORKS` array in `index.html`:
+Open `index.html` through a local static server to preview root-relative asset links.
+When changing the public domain, update `CNAME`, the canonical URL, social image URLs,
+`robots.txt` and `sitemap.xml` together. To update the share card, edit the SVG and
+export it as a 1200 × 630 PNG. Social platforms may cache old previews.
 
-```js
-{
-  id: "001",                    // catalogue number, zero-padded
-  date: "2026-08-30",           // ISO; drives the "Newest" sort
-  title: "…",
-  medium: "digital",            // free text: digital, oil, photograph, collage…
-  img: "works/001.jpg",
-  desc: "…",                    // what it is, 1–2 sentences
-  note: "…",                    // the mono footnote: provenance, the catch, the story
-  form: 0, signal: 0, spread: 0 // 0–10 each, AI-assigned, single pass
-}
-```
+## Future collection and existing syndication
 
-## The three axes
+The page keeps an empty `WORKS` array between the `WORKS:BEGIN` / `WORKS:END` markers
+for compatibility with the existing syndicator. The placeholder poster is a page
+asset, not a collection entry, so it will not be broadcast by that workflow.
 
-| axis   | 0 means            | 10 means                                    |
-| ------ | ------------------ | ------------------------------------------- |
-| form   | an accident        | nothing you could move without breaking it  |
-| signal | decoration         | you cannot unsee it once it's named         |
-| spread | stays on the wall  | distributes itself                          |
-
-Omit an axis entirely (rather than scoring it 0) when it has nothing to measure — it
-renders as a dashed "—" meter and sorts to the bottom of that axis. A zero is a
-judgement, a dash is an admission.
-
-The scores are AI-assigned, single-pass, and the page says so. Re-scoring happens in
-the Telegram channel: https://t.me/planetarycouncil
+The existing distribution tooling is retained for future use. Adding entries to the
+array makes them available to the syndicator; displaying a future collection would
+also require a new page layout.
 
 ## Distribution rails — we preserve consciousness
 
